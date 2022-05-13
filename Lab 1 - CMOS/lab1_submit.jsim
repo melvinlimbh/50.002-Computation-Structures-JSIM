@@ -1,0 +1,25 @@
+.include "nominal.jsim"
+.include "lab1checkoff.jsim"
+
+.subckt F A B C Z
+* C OR (A AND B)
+* 3 inputs
+
+* BEGIN ANSWER
+
+* NOT F CMOS circuitry: Pullup
+MPU1 2 A vdd vdd PENH sw=8 sl=1
+MPU2 2 B vdd vdd PENH sw=8 sl=1
+MPU3 d C 2 vdd PENH sw=8 sl=1
+
+* NOT F CMOS circuitry: Pulldown
+MPD1 d A 1 0 NENH sw=8 sl=1
+MPD2 1 B 0 0 NENH sw=8 sl=1
+MPD3 d C 0 0 NENH sw=8 sl=1
+
+* Inverter
+MPD4 Z d 0 0 NENH sw=16 sl=1
+MPU4 Z d vdd vdd PENH sw=16 sl=1
+
+*END ANSWER
+.ends
