@@ -1,0 +1,46 @@
+*.include "nominal.jsim"
+*.include "stdcell.jsim"
+*.include "lab4_testregfile.jsim"
+
+.subckt REGFILE_UNIT clk wasel ra2sel werf id[25:11] WDSEL_OUT[31:0] ra[31:0] rb[31:0] mwd[31:0] z
+
+* Constant XP
+Xxp1 vdd#4 XP[4:1] bus 
+Xxp2 0 XP0 bus
+
+**** RA2SEL mux ************
+Xra2_mux RA2SEL#5 id[15:11] id[25:21] ra2_mux[4:0] mux2
+
+**** WASEL mux *************
+Xwa_mux WASEL#5 id[25:21] XP[4:0] wa_mux[4:0] mux2
+
+**** Regfile memory ********
+Xregfile
++ vdd 0 0 id[20:16] adata[31:0]
++ vdd 0 0 ra2_mux[4:0] bdata[31:0]
++ 0 clk werf wa_mux[4:0] WDSEL_out[31:0]
++ $memory width=32 nlocations=31
+
+
+* R31 checker for RD1 
+Xand1 id[20:17] andb and4
+Xr id16 andb rd1_sel and2 
+
+* RD1 mux
+Xrd1_mux rd1_sel#32 adata[31:0] 0#32 ra[31:0] mux2
+
+* R31 checker for RD2 
+Xanda ra2_mux[4:1] anda and4
+Xr2 anda ra2_mux0 rd2_sel and2 
+
+* RD2 mux
+Xrd2_mux rd2_sel#32 bdata[31:0] 0#32 rb[31:0] mux2
+
+**** Z computation *********
+Xlayer_1 ra[31:16] ra[15:0] s[7:0] or4
+Xlayer_2 s[7:4] s[3:0] c[1:0] or4
+Xlayer_3 c1 c0 z nor2
+
+**** mwd[31:0] output ******
+Xmwdout mwd[31:0] rb[31:0] bus
+.ends
